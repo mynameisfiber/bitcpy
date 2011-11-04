@@ -1,0 +1,10 @@
+#!/usr/local/python
+
+#  Bitly API username/password as given by:
+#    https://bitly.com/a/your_api_key
+BITLY_API_USERNAME = "USERNAME"
+BITLY_API_PASSWORD = "PASSWORD"
+
+#  Timeout for the main program.  This designates
+#  the time in seconds inbetween clipboard checks.
+TIMEOUT            = 0.5
