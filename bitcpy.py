@@ -61,17 +61,18 @@ def bitify_urlmatch(match):
   return ""
 
 def bitify_string(string):
-  stringnew, num_sub = find_links.subn(bitify_urlmatch, string)
-  if num_sub >= 1:
-    notify(string, stringnew, num_sub)
+  stringnew = find_links.sub(bitify_urlmatch, string)
+  dc = len(string) - len(stringnew)
+  if dc > 0:
+    notify(string, stringnew, dc)
   return stringnew
 
-def notify(string, stringnew, num_sub):
+def notify(old, new, dc):
   if pynotify is not None:
-    n = pynotify.Notification("BitCPy", "Shortened %d URLs in your clipboard!"%num_sub)
+    n = pynotify.Notification("BitCPy", "Shortened clipboard by %d characters!"%(dc))
     n.show()
   else:
-    print "%s => %s (%d changes)"%(string, stringnew, num_sub)
+    print "%s => %s (%d characters removed)"%(old, new, dc)
 
 if __name__ == "__main__":
   import time
