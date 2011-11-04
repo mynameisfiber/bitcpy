@@ -1,9 +1,13 @@
-#!/usr/local/python
+#!/usr/bin/python
 
 import bitly_api
 import xerox
 import re
 from config import BITLY_API_USERNAME, BITLY_API_PASSWORD, TIMEOUT
+try:
+  import pynotify
+except:
+  pynotify = None
 
 bitly = bitly_api.Connection(BITLY_API_USERNAME, BITLY_API_PASSWORD)
 if bitly.login is "":
@@ -20,7 +24,7 @@ anychar = "%(ltrs)s%(gunk)s%(punc)s" % { 'ltrs' : ltrs,
 
 url = r"""
     \b                             # start at word boundary
-    (   (http://|www.)+            # need resource and a colon
+    (   (http[s]?://|www.)+        # need resource and a colon
          [%(any)s]  +?             # followed by one or more
                                    #  of any valid character, but
                                    #  be conservative and take only
@@ -37,14 +41,17 @@ url = r"""
            'punc' : punc }
 
 find_links = re.compile(url, re.VERBOSE | re.MULTILINE) 
+bitly_urls = ["http://bitly.com", "http://bit.ly", "http://j.mp"]
 
 def bitify_urlmatch(match):
   matches = match.groups()
   if len(matches) > 1:
     url = matches[0]
-    if not url.startswith("http://"):
+    if len(url) <= 20:
+      return matches[0]
+    if not url.startswith("http://") and not url.startswith("https://"):
       url = "http://"+url
-    if url.startswith("http://bit.ly/"):
+    if any([url.startswith(burl) for burl in bitly_urls]):
       return matches[0]
     try:
       return bitly.shorten(url)["url"]
@@ -55,8 +62,16 @@ def bitify_urlmatch(match):
 
 def bitify_string(string):
   stringnew, num_sub = find_links.subn(bitify_urlmatch, string)
-  print "%s => %s (%d changes)"%(string, stringnew, num_sub)
+  if num_sub >= 1:
+    notify(string, stringnew, num_sub)
   return stringnew
+
+def notify(string, stringnew, num_sub):
+  if pynotify is not None:
+    n = pynotify.Notification("BitCPy", "Shortened %d URLs in your clipboard!"%num_sub)
+    n.show()
+  else:
+    print "%s => %s (%d changes)"%(string, stringnew, num_sub)
 
 if __name__ == "__main__":
   import time
