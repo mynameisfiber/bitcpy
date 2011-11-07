@@ -85,7 +85,7 @@ def main():
   import time
 
   config = ConfigParser.ConfigParser()
-  config.read([resource_filename(Requirement.parse("bitcpy"),"bitcpy.conf"), 
+  config.read([resource_filename(Requirement.parse("bitcpy"),"bitcpy/bitcpy.conf"), 
                os.path.expanduser("~/.bitcpyrc")])
 
   try:
