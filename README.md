@@ -11,15 +11,15 @@ Alternatively, setup file can be copied to $HOME/.bitcpyrc
 # Example setup #
 
     #Install dependencies
-	  pip install xerox
-	  pip install -e git://github.com/bitly/bitly-api-python.git#egg=bitly_api
+    pip install xerox
+    pip install -e git://github.com/bitly/bitly-api-python.git#egg=bitly_api
 
     #Configuration
-	  cp bitcpy.conf $HOME/.bitcpyrc
+    cp bitcpy.conf $HOME/.bitcpyrc
     vim $HOME/.bitcpyrc
 
     #Install
-	  python ./setup.py install
+    python ./setup.py install
 
     #Run
     bitcpy
